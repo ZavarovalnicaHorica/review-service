@@ -1,0 +1,49 @@
+# Works in Visual Studio 2022 (17.8+) and in VS Code (REST Client extension).
+# Start the service first (docker compose up --build  OR  dotnet run --project src/ReviewService).
+
+@host = http://localhost:5080
+
+### Health (is the database reachable?)
+GET {{host}}/health/ready
+
+### 1) Create a review task without Kafka (Development only)
+POST {{host}}/dev/review-requests
+Content-Type: application/json
+
+{
+  "claimId": "CLM-1001",
+  "policyId": "POL-77",
+  "customerId": "CUS-5",
+  "claimedAmount": 1200.00,
+  "currency": "EUR",
+  "riskScore": 0.45,
+  "riskReasons": [ "Amount above the auto-approval limit of 300 EUR" ],
+  "recommendation": "Approve",
+  "summary": "Policy valid, receipt and photo attached. Amount exceeds the automatic limit."
+}
+
+### 2) The work queue (oldest first)
+GET {{host}}/reviews?status=Pending
+
+### 3) Open one review (replace the id with one from the list above)
+GET {{host}}/reviews/00000000-0000-0000-0000-000000000000
+
+### 4) Take it
+POST {{host}}/reviews/00000000-0000-0000-0000-000000000000/assign
+
+### 5) Decide: Approved | Rejected | NeedsMoreInfo
+POST {{host}}/reviews/00000000-0000-0000-0000-000000000000/decision
+Content-Type: application/json
+
+{
+  "decision": "Approved",
+  "reason": "Documents are complete and consistent."
+}
+
+### 6) Audit trail of a review
+GET {{host}}/reviews/00000000-0000-0000-0000-000000000000/history
+
+### Pretend to be another employee (Auth:Mode=Disabled only)
+POST {{host}}/reviews/00000000-0000-0000-0000-000000000000/assign
+X-Dev-User: ana
+X-Dev-Roles: reviewer

@@ -1,0 +1,18 @@
+{
+  "specversion": "1.0",
+  "id": "5b0c8f7e-3a53-4b53-9d1e-7a6a2d4f9c10",
+  "source": "/horica/review-service",
+  "type": "review.completed.v1",
+  "subject": "claims/CLM-2001",
+  "time": "2026-11-07T10:12:31.5120000+00:00",
+  "datacontenttype": "application/json",
+  "data": {
+    "reviewId": "0f6f1d4a-6a9e-4b0f-8f3e-1f0f2f2f9a11",
+    "claimId": "CLM-2001",
+    "decision": "Approved",
+    "reason": "Documents are complete and consistent.",
+    "reviewerId": "a3f1c2d4-0000-0000-0000-000000000001",
+    "reviewerName": "ana",
+    "decidedAt": "2026-11-07T10:12:31.4980000+00:00"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "specversion": "1.0",
+  "id": "11111111-1111-1111-1111-111111111111",
+  "source": "/horica/claims-service",
+  "type": "review.requested.v1",
+  "subject": "claims/CLM-2001",
+  "time": "2026-11-07T10:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "claimId": "CLM-2001",
+    "policyId": "POL-77",
+    "customerId": "CUS-5",
+    "claimedAmount": 1200.00,
+    "currency": "EUR",
+    "riskScore": 0.45,
+    "riskReasons": [ "Amount above the auto-approval limit of 300 EUR" ],
+    "recommendation": "Approve",
+    "summary": "Policy valid, receipt and photo attached. Amount exceeds the automatic limit."
+  }
+}
