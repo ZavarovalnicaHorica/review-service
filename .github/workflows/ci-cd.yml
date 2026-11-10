@@ -73,7 +73,6 @@ jobs:
     needs: build
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    environment: staging
     concurrency: deploy-staging   # one Helm upgrade at a time
     steps:
       - uses: actions/checkout@v4
