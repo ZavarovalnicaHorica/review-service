@@ -41,4 +41,18 @@ public class KeycloakRoleMapperTests
 
         Assert.Empty(roles);
     }
+
+    [Fact]
+    public void Maps_plain_roles_claim_from_auth_service()
+    {
+        var identity = new System.Security.Claims.ClaimsIdentity(
+            new[] { new System.Security.Claims.Claim("sub", "42"), new System.Security.Claims.Claim("roles", "REVIEWER") },
+            "Bearer");
+        var principal = new System.Security.Claims.ClaimsPrincipal(identity);
+
+        KeycloakRoleMapper.AddRoleClaims(principal, null);
+
+        Assert.True(principal.IsInRole("REVIEWER"));
+        Assert.False(principal.IsInRole("ADMIN"));
+    }
 }

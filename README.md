@@ -48,7 +48,13 @@ Odločitev in dogodek se shranita v isti transakciji (outbox), dostava je vsaj e
 
 V Development je prijava izklopljena (`Auth__Mode=Disabled`, uporabnik `dev-reviewer`). Drugega uporabnika simuliraš z glavama `X-Dev-User` in `X-Dev-Roles`.
 
-Drugje je treba nastaviti `Auth__Authority` (URL Keycloak realma). Vlogi sta `reviewer` in `admin`.
+Drugje je treba nastaviti `Auth__Authority` (auth-service, npr. `http://auth-service:8081`, ali URL Keycloak realma). Vlogi sta `reviewer` in `admin`; tokeni auth-service (`"roles": ["REVIEWER"]`) delujejo, v Helm values sta nastavljeni `REVIEWER` in `ADMIN`.
+
+## Kubernetes (AKS)
+
+Push na `main` požene teste, zgradi sliko `horica-review-service` in jo namesti v namespace `staging`; v `prod` gre z ročnim zagonom workflowa (Actions → CI/CD → Run workflow). Enkratna priprava (baza, Secret `db-review`, Kafka, dostop GitHub → Azure) je opisana korak po koraku v [claims-service/DEPLOY.md](https://github.com/ZavarovalnicaHorica/claims-service/blob/main/DEPLOY.md).
+
+V stagingu in prodi imajo teme predpono (`staging.review.requested.v1`, `prod.review.requested.v1` ...), ker si okolji delita eno Kafko (Strimzi, `horica-kafka-kafka-bootstrap.kafka:9092`).
 
 ## Najpomembnejše nastavitve
 

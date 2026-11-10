@@ -16,10 +16,21 @@ public static class KeycloakRoleMapper
             return;
         }
 
-        var roles = ExtractRoles(
-            identity.FindFirst("realm_access")?.Value,
-            identity.FindFirst("resource_access")?.Value,
-            clientId);
+        var roles = new HashSet<string>(
+            ExtractRoles(
+                identity.FindFirst("realm_access")?.Value,
+                identity.FindFirst("resource_access")?.Value,
+                clientId),
+            StringComparer.OrdinalIgnoreCase);
+
+        // auth-service tokens use a plain "roles" claim: "roles": ["REVIEWER"].
+        foreach (var claim in identity.FindAll("roles"))
+        {
+            if (!string.IsNullOrWhiteSpace(claim.Value))
+            {
+                roles.Add(claim.Value);
+            }
+        }
 
         foreach (var role in roles)
         {

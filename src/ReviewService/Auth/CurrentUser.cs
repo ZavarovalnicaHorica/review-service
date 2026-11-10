@@ -20,6 +20,7 @@ public static class CurrentUserExtensions
 
         var name = FirstValue(principal, "preferred_username")
                    ?? FirstValue(principal, "name")
+                   ?? FirstValue(principal, "email")   // auth-service tokens have only sub + email
                    ?? principal.Identity?.Name;
 
         return new CurrentUser(id, name, principal.IsInRole(adminRole));

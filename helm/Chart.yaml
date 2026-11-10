@@ -1,0 +1,6 @@
+apiVersion: v2
+name: review-service
+description: Zavarovalnica Horica review-service (human review of risky claims)
+type: application
+version: 0.1.0        # version of this chart
+appVersion: "0.0.1"   # version of the app (the image tag is set per deploy)

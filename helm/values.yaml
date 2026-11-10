@@ -1,0 +1,59 @@
+# Default settings. values-dev.yaml / values-staging.yaml / values-prod.yaml override them,
+# and CI overrides image.repository and image.tag with --set.
+
+# Name of the Deployment, Service and HTTPRoute. Other services reach review-service by it.
+name: review-service
+
+replicaCount: 1
+
+image:
+  repository: review-service        # CI: <dockerhub-user>/horica-review-service
+  tag: dev                          # CI: the commit SHA
+  pullPolicy: IfNotPresent
+
+port: 8080
+
+# ASPNETCORE_ENVIRONMENT. "Development" allows auth.mode Disabled and turns Swagger on.
+environment: Production
+
+auth:
+  # "Jwt" = check tokens from auth-service, "Disabled" = fake user (only with environment Development).
+  mode: Jwt
+  # auth-service's issuer: its discovery document and keys are under <authority>/.well-known/.
+  authority: http://auth-service:8081
+  requireHttpsMetadata: false       # in-cluster plain HTTP
+  # auth-service puts the role in the "roles" claim as the enum name.
+  reviewerRole: REVIEWER
+  adminRole: ADMIN
+
+database:
+  # Secret with key DB_CONNECTION_STRING (Npgsql format). Created by hand per namespace, e.g.
+  #   kubectl -n staging create secret generic db-review --from-literal=DB_CONNECTION_STRING=\
+  #     "Host=<server>.postgres.database.azure.com;Port=5432;Database=review_staging;Username=<user>;Password=<password>;Ssl Mode=Require"
+  # The tables are created on startup.
+  secretName: db-review
+
+kafka:
+  # Off: events stay in the outbox table and are sent once Kafka is turned on.
+  # values-staging.yaml / values-prod.yaml turn it on (Strimzi cluster "horica-kafka" in namespace "kafka").
+  enabled: false
+  bootstrapServers: ""              # e.g. horica-kafka-kafka-bootstrap.kafka:9092
+  # Put in front of every topic and of the consumer group, so staging and prod can share one Kafka
+  # without reading each other's events: "staging." -> staging.review.requested.v1
+  topicPrefix: ""
+
+swagger:
+  enabled: false
+
+route:
+  enabled: true
+  gateway: horica-gateway   # the Gateway in the same namespace
+  pathPrefix: /api/reviews  # what the browser calls ...
+  rewritePrefix: /reviews   # ... and what review-service receives
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
