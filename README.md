@@ -52,9 +52,13 @@ Drugje je treba nastaviti `Auth__Authority` (auth-service, npr. `http://auth-ser
 
 ## Kubernetes (AKS)
 
-Push na `main` požene teste, zgradi sliko `horica-review-service` in jo namesti v namespace `staging`; v `prod` gre z ročnim zagonom workflowa (Actions → CI/CD → Run workflow). Enkratna priprava (baza, Secret `db-review`, Kafka, dostop GitHub → Azure) je opisana korak po koraku v [claims-service/DEPLOY.md](https://github.com/ZavarovalnicaHorica/claims-service/blob/main/DEPLOY.md).
+Push na `main` požene teste, zgradi sliko `horica-review-service` in jo namesti v namespace `staging`; v `prod` gre z ročnim zagonom workflowa (Actions → CI/CD → Run workflow).
 
-V stagingu in prodi imajo teme predpono (`staging.review.requested.v1`, `prod.review.requested.v1` ...), ker si okolji delita eno Kafko (Strimzi, `horica-kafka-kafka-bootstrap.kafka:9092`).
+V namespaceu mora obstajati Secret `db-review` s ključem `DB_CONNECTION_STRING` (Npgsql), npr.:
+
+    kubectl -n staging create secret generic db-review --from-literal=DB_CONNECTION_STRING="Host=<server>.postgres.database.azure.com;Port=5432;Database=review_staging;Username=<user>;Password=<password>;Ssl Mode=Require"
+
+Baza se ustvari ob prvem zagonu, če jo uporabnik sme ustvariti. Kafka je na `horica-kafka-kafka-bootstrap.kafka:9092`; teme imajo v stagingu in prodi predpono (`staging.review.requested.v1`, `prod.review.requested.v1` ...), ker si okolji delita eno Kafko. Brez Kafke storitev vseeno teče, dogodki počakajo v outbox tabeli.
 
 ## Najpomembnejše nastavitve
 
