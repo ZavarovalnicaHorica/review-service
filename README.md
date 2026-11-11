@@ -2,7 +2,7 @@
 
 Mikrostoritev za ročni pregled zahtevkov (ReviewService, Zavarovalnica Horica). Prejme `review.requested.v1`, naredi opravilo, zaposleni ga odobri, zavrne ali zahteva dopolnitev, nato se objavi `review.completed.v1`.
 
-.NET 8, EF Core + PostgreSQL, Kafka, JWT (Keycloak).
+.NET 10, EF Core + PostgreSQL, Kafka, JWT (auth-service ali Keycloak).
 
 ## Zagon
 
